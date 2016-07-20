@@ -42,6 +42,7 @@
     "cheerio": "^0.20.0",
     "cuid": "^1.3.8",
     "deep-diff": "^0.3.4",
+    "email-verify": "0.0.18",
     "liquid-node": "^2.6.1",
     "moment": "^2.13.0",
     "moonmail-models": "github:microapps/moonmail-models",

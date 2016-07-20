@@ -7,6 +7,8 @@ import { Recipient, List } from 'moonmail-models';
 import base64url from 'base64-url';
 import querystring from 'querystring';
 import moment from 'moment';
+import verifier from 'email-verify';
+import Promise from 'bluebird';
 
 class ImportRecipientsService {
 
@@ -66,9 +68,10 @@ class ImportRecipientsService {
     };
     return this._publishToSns(importStatus)
       .then(() => this.parseFile())
+      .then(recipients => this._analyzeRecipients(recipients))
       .then(recipients => {
-        this.totalRecipientsCount = recipients.length || 0;
-        this.recipients = recipients.filter(this.filterByEmail.bind(this));
+        this.recipients = recipients.filter((recipient) => recipient !== undefined);
+        this.totalRecipientsCount = this.recipients.length || 0;
         return this.saveRecipients();
       });
   }
@@ -194,7 +197,7 @@ class ImportRecipientsService {
           if (results.errors.length > 0) {
             debug('= ImportRecipientsService.parseCSV', 'Error parsing line', JSON.stringify(results.errors));
           } else {
-            debug('= ImportRecipientsService.parseCSV', 'Parsing recipient', JSON.stringify(item), headerMapping);
+            debug('= ImportRecipientsService.parseCSV', 'Parsing recipient', JSON.stringify(results.data[0]), headerMapping);
             const item = results.data[0];
             const emailKey = Object.keys(item)[0];
             let newRecp = {
@@ -206,6 +209,7 @@ class ImportRecipientsService {
               isConfirmed: true,
               createdAt: moment().unix()
             };
+            // re-map keys
             for (const key in headerMapping) {
               const newKey = headerMapping[key];
               if (newKey && newKey !== 'false') {
@@ -224,14 +228,34 @@ class ImportRecipientsService {
     });
   }
 
-  filterByEmail(recipient) {
-    const email = recipient.email;
-    if (/\S+@\S+\.\S+/.test(email)) {
-      return true;
-    } else {
-      this.corruptedEmails.push(email);
-      return false;
-    }
+  _analyzeRecipients(recipients) {
+    return Promise.map(recipients, (recipient) => this._verifyRecipient(recipient), { concurrency: 20 });
+  }
+
+  _verifyRecipient(recipient) {
+    return new Promise((resolve, reject) => {
+      const email = recipient.email;
+      if (/\S+@\S+\.\S+/.test(email)) {
+        verifier.verify(email, (err, res) => {
+          if (err) {
+            debug('= ImportRecipientsService._verifyRecipient', email, 'error while checking, skipped');
+            this.corruptedEmails.push(email);
+            resolve();
+          }
+          if (res.success) {
+            resolve(email);
+          } else {
+            debug('= ImportRecipientsService._verifyRecipient', email, 'does not exists, skipped');
+            this.corruptedEmails.push(email);
+            resolve();
+          }
+        });
+      } else {
+        debug('= ImportRecipientsService._verifyRecipient', email, 'invalid, skipped');
+        this.corruptedEmails.push(email);
+        resolve();
+      }
+    });
   }
 
   _saveMetadataAttributes() {
