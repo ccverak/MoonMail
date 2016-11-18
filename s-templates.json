@@ -73,6 +73,8 @@
   "linksTable": "${project}-${stage}-links",
   "opensTable": "${project}-${stage}-opens",
   "clicksTable": "${project}-${stage}-clicks",
+  "opensReportTable": "${project}-${stage}-opens-report",
+  "clicksReportTable": "${project}-${stage}-clicks-report",
   "scheduledCampaignsTable": "${project}-${stage}-scheduledCampaigns",
   "campaignsTable": "${project}-${stage}-campaigns",
   "campaignsSentAtIndex": "${project}-${stage}-campaignsSentAtIndex",

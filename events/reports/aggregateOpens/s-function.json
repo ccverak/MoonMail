@@ -1,0 +1,36 @@
+{
+  "name": "aggregateOpens",
+  "runtime": "babel",
+  "description": "Serverless Lambda function for project: MoonMail-v2",
+  "customName": "${project}-reports-aggregateOpens",
+  "customRole": false,
+  "handler": "reports/aggregateOpens/handler.default",
+  "timeout": 60,
+  "memorySize": 1024,
+  "authorizer": {},
+  "custom": {
+    "excludePatterns": []
+  },
+  "endpoints": [],
+  "events": [
+    {
+      "name": "opensStream",
+      "type": "dynamodbstream",
+      "config": {
+        "streamArn": "${opensTableStreamARN}",
+        "enabled": true
+      }
+    }
+  ],
+  "environment": {
+    "SERVERLESS_PROJECT": "${project}",
+    "SERVERLESS_STAGE": "${stage}",
+    "SERVERLESS_REGION": "${region}",
+    "OPENS_REPORT_TABLE": "$${opensReportTable}",
+    "DEBUG": "true"
+  },
+  "vpc": {
+    "securityGroupIds": [],
+    "subnetIds": []
+  }
+}

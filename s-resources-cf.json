@@ -599,6 +599,68 @@
         "TableName": "$${clicksTable}"
       }
     },
+    "OpensReportTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "campaignId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "timestamp",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "campaignId",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "timestamp",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "${opensReportRCU}",
+          "WriteCapacityUnits": "${opensReportWCU}"
+        },
+        "TableName": "$${opensReportTable}"
+      }
+    },
+    "ClicksReportTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "campaignId",
+            "AttributeType": "S"
+          },
+          {
+            "AttributeName": "timestamp",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "campaignId",
+            "KeyType": "HASH"
+          },
+          {
+            "AttributeName": "timestamp",
+            "KeyType": "RANGE"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": "${clicksReportRCU}",
+          "WriteCapacityUnits": "${clicksReportWCU}"
+        },
+        "TableName": "$${clicksReportTable}"
+      }
+    },
     "ListsTable": {
       "Type": "AWS::DynamoDB::Table",
       "DeletionPolicy": "Retain",

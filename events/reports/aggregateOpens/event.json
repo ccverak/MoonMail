@@ -1,0 +1,70 @@
+{
+    "Records": [
+        {
+            "eventID": "ed55c6f95dbc728d4a61d2ea7d43a906",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-east-1",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1476178560,
+                "Keys": {
+                    "campaignId": {
+                        "S": "city3zbl5000401pfv6dabmof"
+                    },
+                    "recipientId": {
+                        "S": "ZGF2aWQuZ2FyY2lhQG1pY3JvYXBwcy5jb20"
+                    }
+                },
+                "NewImage": {
+                    "campaignId": {
+                        "S": "city3zbl5000401pfv6dabmof"
+                    },
+                    "recipientId": {
+                        "S": "ZGF2aWQuZ2FyY2lhQG1pY3JvYXBwcy5jb20"
+                    },
+                    "timestamp": {
+                        "N": "1476178088"
+                    }
+                },
+                "SequenceNumber": "22136100000000000662882139",
+                "SizeBytes": 177,
+                "StreamViewType": "NEW_IMAGE"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-east-1:862946620411:table/MoonMail-v2-dev-opens/stream/2016-10-06T16:25:58.134"
+        },
+        {
+            "eventID": "ed55c6f95dbc728d4a61d2ea7d43a907",
+            "eventName": "INSERT",
+            "eventVersion": "1.1",
+            "eventSource": "aws:dynamodb",
+            "awsRegion": "us-east-1",
+            "dynamodb": {
+                "ApproximateCreationDateTime": 1476178561,
+                "Keys": {
+                    "campaignId": {
+                        "S": "city3zbl5000401pfv6dabmof"
+                    },
+                    "recipientId": {
+                        "S": "ZGF2aWQuZ2FyY2lhQG1pY3JvYXBwcy5jb22"
+                    }
+                },
+                "NewImage": {
+                    "campaignId": {
+                        "S": "city3zbl5000401pfv6dabmof"
+                    },
+                    "recipientId": {
+                        "S": "ZGF2aWQuZ2FyY2lhQG1pY3JvYXBwcy5jb22"
+                    },
+                    "timestamp": {
+                        "N": "1476178089"
+                    }
+                },
+                "SequenceNumber": "22136100000000000662882140",
+                "SizeBytes": 177,
+                "StreamViewType": "NEW_IMAGE"
+            },
+            "eventSourceARN": "arn:aws:dynamodb:us-east-1:862946620411:table/MoonMail-v2-dev-opens/stream/2016-10-06T16:25:58.134"
+        },
+    ]
+}
