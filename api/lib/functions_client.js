@@ -1,6 +1,6 @@
 import { Lambda } from 'aws-sdk';
 
-const lambdaClient = new Lambda({region: process.env.SERVERLESS_REGION});
+const lambdaClient = new Lambda({ region: process.env.SERVERLESS_REGION });
 
 export default class FunctionsClient {
   static execute(functionName, payload = {}, options = {}) {
@@ -11,7 +11,13 @@ export default class FunctionsClient {
       InvocationType: inovkationType
     };
     return this.client.invoke(params).promise()
-      .then(result => this._handleResponse(result));
+      .then(result => this._handleResponse(result))
+      .then(payload => this._rejectIfError(payload));
+  }
+
+  static _rejectIfError(payload) {
+    if (payload.errorType) return Promise.reject(payload);
+    return Promise.resolve(payload);
   }
 
   static _handleResponse(lambdaResult) {
