@@ -1092,9 +1092,9 @@ moment@2.x.x, moment@^2.13.0, moment@^2.15.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
 
-"moonmail-models@github:microapps/moonmail-models":
+moonmail-models@microapps/moonmail-models:
   version "1.1.1"
-  resolved "https://codeload.github.com/microapps/moonmail-models/tar.gz/5b985a5f6be1a60ca89fbe937165501c09c6029a"
+  resolved "https://codeload.github.com/microapps/moonmail-models/tar.gz/5c959d87467258dd67a633e8966dddbea6b61145"
   dependencies:
     aws-sdk "^2.3.10"
     base64-url "^1.2.2"

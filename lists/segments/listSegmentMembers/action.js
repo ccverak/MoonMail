@@ -14,8 +14,6 @@ export default function respond(event, cb) {
 }
 
 function getMembers(segment, event, options) {
-  const listIdCondition = { condition: { queryType: 'match', fieldToQuery: 'listId', searchTerm: event.listId }, conditionType: 'filter' };
-  segment.conditions.push(listIdCondition);
   return Segments.listSegmentMembersFromConditions(segment.conditions, options.from || 0, options.size || 10);
 }
 
