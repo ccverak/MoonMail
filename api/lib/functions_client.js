@@ -15,27 +15,24 @@ export default class FunctionsClient {
   }
 
   static _handleResponse(lambdaResult) {
-    console.log('_handleResponse', JSON.stringify(lambdaResult));
     return this._successfulAWSCall(lambdaResult) ?
       this._parseResults(lambdaResult) : Promise.reject(lambdaResult);
   }
 
   static _parseResults(lambdaResult) {
     if (this._successfulFunctionResult(lambdaResult)) {
-      console.log("_successfulFunctionResult==true");
       return Promise.resolve(JSON.parse(lambdaResult.Payload));
     }
     const err = this._parseFunctionError(lambdaResult.Payload);
-    console.log("ERR", err);
     return Promise.reject(err);
   }
 
   static _parseFunctionError(payload) {
+    const parsedPayload = JSON.parse(payload);
     try {
-      return JSON.parse(payload.errorMessage);
+      return JSON.parse(parsedPayload.errorMessage);
     } catch (e) {
-      console.log(e);
-      return payload;
+      return parsedPayload;
     }
   }
 

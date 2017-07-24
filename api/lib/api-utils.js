@@ -13,7 +13,7 @@ export function newError(name, message, status = 500) {
   err.name = name;
   err.status = status;
   Object.defineProperty(err, 'toJSON', {
-    value: () => ({message, status, name}),
+    value: () => ({ message, status, name }),
     configurable: true,
     writable: true
   });
@@ -28,7 +28,8 @@ export function paramsChecker(requiredParams) {
   });
 }
 
-export function errorHandler(err, {customErrorNames = []}, cb) {
+export function errorHandler(err, { customErrorNames = [] }, cb) {
+  console.log('errorHandler', err, customErrorNames);
   const handledErrorNames = Object.keys(errors).concat(customErrorNames);
   if (handledErrorNames.includes(err.name)) return cb(JSON.stringify(err));
   return cb(JSON.stringify(errors.ServiceUnavailable));

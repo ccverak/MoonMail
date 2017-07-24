@@ -15,7 +15,7 @@ export default function respond(event, cb) {
       logger().error(err);
       // Even search is based upon segments
       if (err.name === 'ListSegmentError') {
-        return errorHandler(newError('ConditionsFormatError', err.message, 401), ['ConditionsFormatError'], cb);
+        return errorHandler(newError('ConditionsFormatError', err.message, 401), { customErrorNames: ['ConditionsFormatError'] }, cb);
       }
       return errorHandler(err, [], cb);
     });

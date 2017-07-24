@@ -22,6 +22,7 @@ const Recipients = {
   },
 
   updateESRecipient(id, newRecipient) {
+    if (!validRecipient(newRecipient)) return Promise.resolve();
     const recipientToIndex = Object.assign({}, newRecipient, { createdAt: moment.unix(newRecipient.createdAt).utc().format() });
     return ElasticSearch.createOrUpdateDocument(this.client, this.indexName, this.indexType, id, recipientToIndex);
   },
