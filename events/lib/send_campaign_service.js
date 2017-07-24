@@ -1,7 +1,6 @@
-'use strict';
-
 import { debug } from './index';
 import { Campaign } from 'moonmail-models';
+import omitEmpty from 'omit-empty';
 
 class SendCampaignService {
 
@@ -15,8 +14,8 @@ class SendCampaignService {
   sendCampaign() {
     debug('= SendCampaignService.sendCampaign', `Sending campaign with id ${this.campaignId}`);
     return this.getCampaign()
-      .then((campaignRecord) => this.buildCampaignMessage(campaignRecord))
-      .then((canonicalMessage) => this.publishToSns(canonicalMessage));
+      .then(campaignRecord => this.buildCampaignMessage(campaignRecord))
+      .then(canonicalMessage => this.publishToSns(canonicalMessage));
   }
 
   getCampaign() {
@@ -27,7 +26,7 @@ class SendCampaignService {
   buildCampaignMessage(campaign) {
     debug('= SendCampaignService.buildCampaignMessage', campaign);
     return new Promise((resolve) => {
-      resolve({
+      resolve(omitEmpty({
         userId: this.userId,
         campaign: {
           id: campaign.id,
@@ -36,8 +35,9 @@ class SendCampaignService {
           senderId: campaign.senderId,
           precompiled: false
         },
-        listIds: campaign.listIds
-      });
+        listIds: campaign.listIds,
+        segmentGId: campaign.segmentGId
+      }));
     });
   }
 

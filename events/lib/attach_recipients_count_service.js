@@ -1,4 +1,7 @@
 import { List } from 'moonmail-models';
+import base64url from 'base64-url';
+import FunctionsClient from './functions_client';
+
 
 class AttachRecipientsCountService {
 
@@ -12,10 +15,23 @@ class AttachRecipientsCountService {
   }
 
   attachCount() {
-    return this._getLists()
-      .then(lists => this._countRecipients(lists))
+    return this.getRecipientsCount()
       .then(count => this._buildCanonicalMessage(count))
       .then(canonicalMessage => this._publishToSns(canonicalMessage));
+  }
+
+  getRecipientsCount() {
+    if (this.canonicalMessage.campaign.segmentGId) return this._attachSegmentCount();
+    return this._attachListCount();
+  }
+
+  _attachSegmentCount() {
+    return this._countSegmentRecipients();
+  }
+
+  _attachListCount() {
+    return this._getLists()
+      .then(lists => this._countRecipients(lists));
   }
 
   _getLists() {
@@ -29,8 +45,21 @@ class AttachRecipientsCountService {
     return count;
   }
 
+  _countSegmentRecipients() {
+    const segmentGId = JSON.parse(base64url.decode(this.canonicalMessage.campaign.segmentGId));
+    return FunctionsClient.execute(process.env.LIST_SEGMENT_MEMBERS_FUNCTION, {
+      listId: segmentGId.listId,
+      segmentId: segmentGId.segmentId,
+      options: {
+        conditions: [
+          { condition: { queryType: 'match', fieldToQuery: 'status', searchTerm: 'subscribed' }, conditionType: 'filter' }
+        ]
+      }
+    }).then(response => response.total);
+  }
+
   _buildCanonicalMessage(recipientsCount) {
-    return Object.assign({}, this.canonicalMessage, {recipientsCount});
+    return Object.assign({}, this.canonicalMessage, { recipientsCount });
   }
 
   _publishToSns(canonicalMessage) {

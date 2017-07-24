@@ -26,6 +26,7 @@
     "SERVERLESS_STAGE": "${stage}",
     "SERVERLESS_REGION": "${region}",
     "ATTACH_SENDER_TOPIC_ARN": "${attachSenderTopicARN}",
+    "LIST_SEGMENT_MEMBERS_FUNCTION": "$${listSegmentMembersFunctionName}",
     "LISTS_TABLE": "$${listsTable}",
     "DEBUG": "true"
   },

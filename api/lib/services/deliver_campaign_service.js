@@ -1,4 +1,6 @@
 import Promise from 'bluebird';
+import omitEmpty from 'omit-empty';
+import base64url from 'base64-url';
 import { debug } from '../logger';
 import { Campaign, List } from 'moonmail-models';
 import inlineCss from 'inline-css';
@@ -106,7 +108,7 @@ class DeliverCampaignService {
     debug('= DeliverCampaignService._buildCampaignMessage', campaign);
     return new Promise((resolve) => {
       const inlinedBody = juice(campaign.body);
-      resolve({
+      resolve(omitEmpty({
         userId: campaign.userId,
         userPlan: this.userPlan,
         currentUserState: this.currentState,
@@ -116,9 +118,10 @@ class DeliverCampaignService {
           body: inlinedBody,
           senderId: campaign.senderId,
           precompiled: false,
-          listIds: campaign.listIds
+          listIds: campaign.listIds,
+          segmentGId: campaign.segmentGId
         }
-      });
+      }));
     });
   }
   _publishToSns(canonicalMessage) {

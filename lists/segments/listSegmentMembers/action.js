@@ -14,6 +14,7 @@ export default function respond(event, cb) {
 }
 
 function getMembers(segment, event, options) {
-  return Segments.listSegmentMembersFromConditions(segment.conditions, options.from || 0, options.size || 10);
+  const extraConditions = options.conditions || [];
+  return Segments.listSegmentMembersByConditions([...segment.conditions, ...extraConditions], options.from || 0, options.size || 10);
 }
 

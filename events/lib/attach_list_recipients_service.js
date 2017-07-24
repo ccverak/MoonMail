@@ -1,5 +1,3 @@
-'use strict';
-
 import { debug } from './index';
 import { Recipient } from 'moonmail-models';
 import * as async from 'async';
@@ -34,7 +32,7 @@ class AttachListRecipientsService {
     return new Promise((resolve, reject) => {
       const next = {};
       this._getRecipientsBatch(listId, options)
-        .then(result => {
+        .then((result) => {
           if (result.nextPage) {
             next.page = result.nextPage;
           }
@@ -75,7 +73,7 @@ class AttachListRecipientsService {
       async.each(recipients, (recipient, cb) => {
         this._publishRecipient(recipient)
           .then(() => cb())
-          .catch(err => {
+          .catch((err) => {
             debug('= AttachListRecipientsService._publishRecipients',
               'Couldn\'t publish recipient', JSON.stringify(recipient), err);
             cb();
