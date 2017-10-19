@@ -16,7 +16,9 @@ describe('Events', () => {
             status: Recipient.statuses.subscribed,
             isConfirmed: true,
             metadata: {random: 'data'}
-          }
+          },
+          totalRecipients: 100,
+          recipientIndex: 5
         }
       }
     ];
@@ -30,6 +32,19 @@ describe('Events', () => {
             listId: 'list-id',
             userId: 'user-id',
             status: 'non-existant',
+            isConfirmed: true
+          }
+        }
+      },
+      {
+        type: 'list.recipient.import',
+        payload: {
+          recipient: {
+            id: 'recipient-id',
+            email: 'wrongemail.com',
+            listId: 'list-id',
+            userId: 'user-id',
+            status: Recipient.statuses.subscribed,
             isConfirmed: true
           }
         }

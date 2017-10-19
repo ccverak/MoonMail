@@ -8,13 +8,15 @@ const eventSchemas = {
       payload: Joi.object({
         recipient: Joi.object({
           id: Joi.string().required(),
-          email: Joi.string().required(),
+          email: Joi.string().required().email(),
           listId: Joi.string().required(),
           userId: Joi.string().required(),
           status: Joi.string().valid(Recipient.statuses.subscribed).required(),
           isConfirmed: Joi.boolean().required(),
           metadata: Joi.object().unknown(true)
-        }).required()
+        }).required(),
+        totalRecipients: Joi.number(),
+        recipientIndex: Joi.number()
       }).required()
     })
   }
@@ -29,6 +31,9 @@ const isValid = (event) => {
   }
 };
 
+const publishBatch = () => {};
+
 export default {
-  isValid
+  isValid,
+  publishBatch
 };
