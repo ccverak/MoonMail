@@ -1,11 +1,26 @@
-import '../spec_helper';
 import awsMock from 'aws-sdk-mock';
 import AWS from 'aws-sdk';
+import fs from 'fs';
+import '../spec_helper';
 import ImportRecipientsCsv from './ImportRecipientsCsv';
 
+const validEmailsCsvContent = fs.readFileSync('./fixtures/250_valid_recipients.csv').toString();
+const validEmailsCsvBomContent = fs.readFileSync('./fixtures/250_valid_recipients_with_bom.csv').toString();
+const with3InvalidEmailsCsvContent = fs.readFileSync('./fixtures/247_valid_3_invalid_recipients.csv').toString();
+const with8DuplicatedEmailsCsvContent = fs.readFileSync('./fixtures/242_valid_8_duplicated_recipients.csv').toString();
+const fileName = 'my-user.my-list.csv';
+const metadataMapping = {};
+const offset = 0;
+
 describe('.execute()', () => {
-  it('should pass the CSV file contents to the mapper service');
-  it('should call the trigger save recipients service with correct parameters');
+  it('should call the trigger save recipients service with correct parameters', async () => {
+    const service = ImportRecipientsCsv.create(
+      {csvString: validEmailsCsvContent, metadataMapping, fileName},
+      new AWS.Lambda(),
+      {getRemainingTimeInMillis: () => 300000}
+    );
+    const result = await service.execute();
+  });
 
   context('when there is no offset', () => {
     it('should create import status');
