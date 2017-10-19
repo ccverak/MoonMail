@@ -22,8 +22,8 @@ function mapCsvRecipients({csvString, userId, listId, metadataMapping}) {
         } catch (err) {}
       },
       complete: () => {
-        const uniqueRecipients = _.uniqBy(recipients, 'email')
-        resolve(uniqueRecipients)
+        const uniqueRecipients = _.uniqBy(recipients, 'email');
+        resolve(uniqueRecipients);
       }
     });
   });
@@ -67,4 +67,4 @@ function isValidEmail(email) {
 
 export default {
   execute: mapCsvRecipients
-}
+};

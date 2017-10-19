@@ -11,10 +11,10 @@ const with8DuplicatedEmailsCsvContent = fs.readFileSync('./fixtures/242_valid_8_
 const userId = 'user-id';
 const listId = 'list-id';
 const metadataMapping = {
-  'Name': 'firstName',
+  Name: 'firstName',
+  email: 'email',
+  Country: 'country',
   'Last Name': 'surname',
-  'email': 'email',
-  'Country': 'country',
   'Date of Birth': 'dob'
 };
 const expectValidRecipient = recipient => {
@@ -31,7 +31,7 @@ const expectValidRecipient = recipient => {
   expect(metadata).to.have.property('dob').that.is.a('string');
   const id = base64.encode(recipient.email);
   expect(recipient).to.have.property('id', id);
-}
+};
 
 describe('CsvToRecipientsMapper', () => {
   describe('.execute()', () => {
@@ -39,25 +39,25 @@ describe('CsvToRecipientsMapper', () => {
       const params = {csvString: validEmailsCsvContent, userId, listId, metadataMapping};
       const result = await CsvToRecipientsMapper.execute(params);
       expect(result).to.have.lengthOf(250);
-      result.forEach(recipient => expectValidRecipient(recipient))
+      result.forEach(recipient => expectValidRecipient(recipient));
     });
     it('skip non valid emails', async () => {
       const params = {csvString: with3InvalidEmailsCsvContent, userId, listId, metadataMapping};
       const result = await CsvToRecipientsMapper.execute(params);
       expect(result).to.have.lengthOf(247);
-      result.forEach(recipient => expectValidRecipient(recipient))
+      result.forEach(recipient => expectValidRecipient(recipient));
     });
     it('deduplicate emails', async () => {
       const params = {csvString: with8DuplicatedEmailsCsvContent, userId, listId, metadataMapping};
       const result = await CsvToRecipientsMapper.execute(params);
       expect(result).to.have.lengthOf(242);
-      result.forEach(recipient => expectValidRecipient(recipient))
+      result.forEach(recipient => expectValidRecipient(recipient));
     });
     it('should handle files with BOM', async () => {
       const params = {csvString: validEmailsCsvBomContent, userId, listId, metadataMapping};
       const result = await CsvToRecipientsMapper.execute(params);
       expect(result).to.have.lengthOf(250);
-      result.forEach(recipient => expectValidRecipient(recipient))
+      result.forEach(recipient => expectValidRecipient(recipient));
     });
   });
 });
