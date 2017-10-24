@@ -15,9 +15,9 @@ const offset = 0;
 describe('.execute()', () => {
   it('should call the trigger save recipients service with correct parameters', async () => {
     const service = ImportRecipientsCsv.create(
-      {csvString: validEmailsCsvContent, metadataMapping, fileName},
+      { csvString: validEmailsCsvContent, metadataMapping, fileName },
       new AWS.Lambda(),
-      {getRemainingTimeInMillis: () => 300000}
+      { getRemainingTimeInMillis: () => 300000 }
     );
     const result = await service.execute();
   });

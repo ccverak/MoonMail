@@ -2,7 +2,7 @@ import fs from 'fs';
 import { Recipient } from 'moonmail-models';
 import base64 from 'base64-url';
 import '../spec_helper';
-import CsvToRecipientsMapper from './CsvToRecipientsMapper';
+import CsvToRecipientsMapper from './MapCsvToRecipients';
 
 const validEmailsCsvContent = fs.readFileSync('./fixtures/250_valid_recipients.csv').toString();
 const validEmailsCsvBomContent = fs.readFileSync('./fixtures/250_valid_recipients_with_bom.csv').toString();
