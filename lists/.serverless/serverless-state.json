@@ -1,0 +1,465 @@
+{
+  "service": {
+    "service": "MoonMail-v2-lists",
+    "serviceObject": {
+      "name": "MoonMail-v2-lists"
+    },
+    "provider": {
+      "stage": "dev",
+      "region": "us-east-1",
+      "variableSyntax": "\\${([ ~:a-zA-Z0-9._'\",\\-\\/\\(\\)]+?)}",
+      "name": "aws",
+      "runtime": "nodejs6.10",
+      "profile": "MoonMail-v2-lists-dev",
+      "timeout": 300,
+      "environment": {
+        "LOG_LEVEL": "debug",
+        "LISTS_TABLE": "MoonMail-v2-dev-lists",
+        "RECIPIENTS_TABLE": "MoonMail-v2-dev-recipients",
+        "ES_HOST": "https://search-es-microapps-odcj3qud4olgytj6sz4bfy3nxm.us-east-1.es.amazonaws.com/",
+        "ES_REGION": "us-east-1"
+      },
+      "iamRoleStatements": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "dynamodb:*",
+            "lambda:*",
+            "kinesis:*",
+            "s3:*",
+            "logs:*",
+            "ec2:CreateNetworkInterface",
+            "ec2:DescribeNetworkInterfaces",
+            "ec2:DeleteNetworkInterface"
+          ],
+          "Resource": "*"
+        }
+      ],
+      "versionFunctions": true,
+      "remoteFunctionData": null,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket"
+          },
+          "ImportRecipientsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/MoonMail-v2-lists-dev-importRecipients"
+            }
+          },
+          "RecipientImportedEventHandlerLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/MoonMail-v2-lists-dev-recipientImportedEventHandler"
+            }
+          },
+          "IamRoleLambdaExecution": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": [
+                        "lambda.amazonaws.com"
+                      ]
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "Policies": [
+                {
+                  "PolicyName": {
+                    "Fn::Join": [
+                      "-",
+                      [
+                        "dev",
+                        "MoonMail-v2-lists",
+                        "lambda"
+                      ]
+                    ]
+                  },
+                  "PolicyDocument": {
+                    "Version": "2012-10-17",
+                    "Statement": [
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:CreateLogStream"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/MoonMail-v2-lists-dev-importRecipients:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/MoonMail-v2-lists-dev-recipientImportedEventHandler:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "logs:PutLogEvents"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/MoonMail-v2-lists-dev-importRecipients:*:*"
+                          },
+                          {
+                            "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/MoonMail-v2-lists-dev-recipientImportedEventHandler:*:*"
+                          }
+                        ]
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "dynamodb:*",
+                          "lambda:*",
+                          "kinesis:*",
+                          "s3:*",
+                          "logs:*",
+                          "ec2:CreateNetworkInterface",
+                          "ec2:DescribeNetworkInterfaces",
+                          "ec2:DeleteNetworkInterface"
+                        ],
+                        "Resource": "*"
+                      },
+                      {
+                        "Effect": "Allow",
+                        "Action": [
+                          "kinesis:GetRecords",
+                          "kinesis:GetShardIterator",
+                          "kinesis:DescribeStream",
+                          "kinesis:ListStreams"
+                        ],
+                        "Resource": [
+                          {
+                            "Fn::GetAtt": [
+                              "ListEventStream",
+                              "Arn"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                }
+              ],
+              "Path": "/",
+              "RoleName": {
+                "Fn::Join": [
+                  "-",
+                  [
+                    "MoonMail-v2-lists",
+                    "dev",
+                    "us-east-1",
+                    "lambdaRole"
+                  ]
+                ]
+              }
+            }
+          },
+          "ImportRecipientsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/MoonMail-v2-lists/dev/1508943182056-2017-10-25T14:53:02.056Z/importRecipients.zip"
+              },
+              "FunctionName": "MoonMail-v2-lists-dev-importRecipients",
+              "Handler": "_optimize/MoonMail-v2-lists-dev-importRecipients/lib/Recipients.importRecipientsCsvFromS3",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs6.10",
+              "Timeout": 300,
+              "Environment": {
+                "Variables": {
+                  "LOG_LEVEL": "debug",
+                  "LISTS_TABLE": "MoonMail-v2-dev-lists",
+                  "RECIPIENTS_TABLE": "MoonMail-v2-dev-recipients",
+                  "ES_HOST": "https://search-es-microapps-odcj3qud4olgytj6sz4bfy3nxm.us-east-1.es.amazonaws.com/",
+                  "ES_REGION": "us-east-1"
+                }
+              }
+            },
+            "DependsOn": [
+              "ImportRecipientsLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "ImportRecipientsLambdaVersionGhG7ksrY5pDdbXludgcbzaqqVUOYAweuC1LRHbqLY": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ImportRecipientsLambdaFunction"
+              },
+              "CodeSha256": "GhG7ksrY5pDdbX+ludgcbzaqqVUOYA/weuC1LRHbqLY="
+            }
+          },
+          "RecipientImportedEventHandlerLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": {
+                  "Ref": "ServerlessDeploymentBucket"
+                },
+                "S3Key": "serverless/MoonMail-v2-lists/dev/1508943182056-2017-10-25T14:53:02.056Z/recipientImportedEventHandler.zip"
+              },
+              "FunctionName": "MoonMail-v2-lists-dev-recipientImportedEventHandler",
+              "Handler": "_optimize/MoonMail-v2-lists-dev-recipientImportedEventHandler/lib/Recipients.recipientImportedHandler",
+              "MemorySize": 1024,
+              "Role": {
+                "Fn::GetAtt": [
+                  "IamRoleLambdaExecution",
+                  "Arn"
+                ]
+              },
+              "Runtime": "nodejs6.10",
+              "Timeout": 300,
+              "Environment": {
+                "Variables": {
+                  "LOG_LEVEL": "debug",
+                  "LISTS_TABLE": "MoonMail-v2-dev-lists",
+                  "RECIPIENTS_TABLE": "MoonMail-v2-dev-recipients",
+                  "ES_HOST": "https://search-es-microapps-odcj3qud4olgytj6sz4bfy3nxm.us-east-1.es.amazonaws.com/",
+                  "ES_REGION": "us-east-1"
+                }
+              }
+            },
+            "DependsOn": [
+              "RecipientImportedEventHandlerLogGroup",
+              "IamRoleLambdaExecution"
+            ]
+          },
+          "RecipientImportedEventHandlerLambdaVersionVr18R0fZNZPqYMxKiXUf2aXvnUZQxFayfivGCBMJDBU": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "RecipientImportedEventHandlerLambdaFunction"
+              },
+              "CodeSha256": "Vr18R0fZNZPqYMxKiXUf2aXvnUZQxFayfivGCBMJDBU="
+            }
+          },
+          "S3BucketNextrecipientsmoonmaildevuseast1": {
+            "Type": "AWS::S3::Bucket",
+            "Properties": {
+              "BucketName": "next-recipients.moonmail.dev.us-east-1",
+              "NotificationConfiguration": {
+                "LambdaConfigurations": [
+                  {
+                    "Event": "s3:ObjectCreated:*",
+                    "Function": {
+                      "Fn::GetAtt": [
+                        "ImportRecipientsLambdaFunction",
+                        "Arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            "DependsOn": [
+              "ImportRecipientsLambdaPermissionNextrecipientsmoonmaildevuseast1S3"
+            ]
+          },
+          "ImportRecipientsLambdaPermissionNextrecipientsmoonmaildevuseast1S3": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ImportRecipientsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "s3.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:aws:s3:::next-recipients.moonmail.dev.us-east-1"
+                  ]
+                ]
+              }
+            }
+          },
+          "RecipientImportedEventHandlerEventSourceMappingKinesisListEventStream": {
+            "Type": "AWS::Lambda::EventSourceMapping",
+            "DependsOn": "IamRoleLambdaExecution",
+            "Properties": {
+              "BatchSize": 100,
+              "EventSourceArn": {
+                "Fn::GetAtt": [
+                  "ListEventStream",
+                  "Arn"
+                ]
+              },
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "RecipientImportedEventHandlerLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "StartingPosition": "TRIM_HORIZON",
+              "Enabled": "True"
+            }
+          },
+          "ListEventStream": {
+            "Type": "AWS::Kinesis::Stream",
+            "Properties": {
+              "Name": "ListEventStream",
+              "ShardCount": 1
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          },
+          "ImportRecipientsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ImportRecipientsLambdaVersionGhG7ksrY5pDdbXludgcbzaqqVUOYAweuC1LRHbqLY"
+            }
+          },
+          "RecipientImportedEventHandlerLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "RecipientImportedEventHandlerLambdaVersionVr18R0fZNZPqYMxKiXUf2aXvnUZQxFayfivGCBMJDBU"
+            }
+          },
+          "ListEventStreamARN": {
+            "Description": "ListEventStream Kinesis Stream ARN",
+            "Value": {
+              "Fn::GetAtt": [
+                "ListEventStream",
+                "Arn"
+              ]
+            }
+          }
+        }
+      },
+      "coreCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ServerlessDeploymentBucket": {
+            "Type": "AWS::S3::Bucket"
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": {
+              "Ref": "ServerlessDeploymentBucket"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "defaultStage": "dev",
+      "currentStage": "dev",
+      "resourcesPrefix": "MoonMail-v2-lists-dev",
+      "recipientsBucket": "next-recipients.moonmail.dev.us-east-1",
+      "serverless-offline": {
+        "babelOptions": {
+          "presets": [
+            "es2015"
+          ]
+        }
+      }
+    },
+    "plugins": [
+      "serverless-plugin-optimize",
+      "serverless-offline"
+    ],
+    "functions": {
+      "importRecipients": {
+        "handler": "_optimize/MoonMail-v2-lists-dev-importRecipients/lib/Recipients.importRecipientsCsvFromS3",
+        "name": "MoonMail-v2-lists-dev-importRecipients",
+        "events": [
+          {
+            "s3": {
+              "bucket": "next-recipients.moonmail.dev.us-east-1",
+              "event": "s3:ObjectCreated:*"
+            }
+          }
+        ],
+        "package": {
+          "artifact": "/Users/ccvera/Workspace/MoonMail/lists/.serverless/importRecipients.zip"
+        },
+        "vpc": {}
+      },
+      "recipientImportedEventHandler": {
+        "handler": "_optimize/MoonMail-v2-lists-dev-recipientImportedEventHandler/lib/Recipients.recipientImportedHandler",
+        "name": "MoonMail-v2-lists-dev-recipientImportedEventHandler",
+        "events": [
+          {
+            "stream": {
+              "type": "kinesis",
+              "batchSize": 100,
+              "startingPosition": "TRIM_HORIZON",
+              "arn": {
+                "Fn::GetAtt": [
+                  "ListEventStream",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        ],
+        "package": {
+          "artifact": "/Users/ccvera/Workspace/MoonMail/lists/.serverless/recipientImportedEventHandler.zip"
+        },
+        "vpc": {}
+      }
+    },
+    "resources": {
+      "Resources": {
+        "ListEventStream": {
+          "Type": "AWS::Kinesis::Stream",
+          "Properties": {
+            "Name": "ListEventStream",
+            "ShardCount": 1
+          }
+        }
+      },
+      "Outputs": {
+        "ListEventStreamARN": {
+          "Description": "ListEventStream Kinesis Stream ARN",
+          "Value": {
+            "Fn::GetAtt": [
+              "ListEventStream",
+              "Arn"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "package": {
+    "individually": true,
+    "artifactDirectoryName": "serverless/MoonMail-v2-lists/dev/1508943182056-2017-10-25T14:53:02.056Z",
+    "artifact": ""
+  }
+}
