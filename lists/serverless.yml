@@ -23,6 +23,8 @@ provider:
       Action:
         - "dynamodb:*"
         - "lambda:*"
+        - "kinesis:*"
+        - "s3:*"
         - "logs:*"
         - "ec2:CreateNetworkInterface"
         - "ec2:DescribeNetworkInterfaces"
@@ -33,6 +35,7 @@ custom:
   defaultStage: dev
   currentStage: ${opt:stage, self:custom.defaultStage}
   resourcesPrefix: ${self:service}-${self:custom.currentStage}
+  recipientsBucket: moonmail.${self:custom.currentStage}.${self:provider.region}
   serverless-offline:
     babelOptions:
       presets: ["es2015"]
@@ -42,21 +45,37 @@ package:
   individually: true
 
 functions:
-  createTemplate:
-    handler: templates.createTemplate
-    name: ${self:custom.resourcesPrefix}-createTemplate
+  importRecipients:
+    handler: lib/Recipients.importRecipientsCsvFromS3
+    name: ${self:custom.resourcesPrefix}-importRecipients
+    events:
+      - s3:
+        bucket: ${self:custom.recipientsBucket}
+        event: s3:ObjectCreated:*
+
+  recipientImportedEventHandler:
+    handler: lib/Recipients.recipientImportedHandler
+    name: ${self:custom.resourcesPrefix}-recipientImportedEventHandler
+    events:
+      - kinesis:
+        batchSize: 100
+        startingPosition: TRIM_HORIZON
+        arn: 
+          Fn::GetAtt:
+            - ListEventStream
+            - Arn
 
 resources:
   Resources:
-    RecipientEventStream:
+    ListEventStream:
       Type: AWS::Kinesis::Stream
       Properties:
-        Name: RecipientEvents
+        Name: ListEventStream
         ShardCount: 1
   Outputs:
-    RecipientsStreamARN:
-      Description: RecipientEvents Kinesis Stream ARN
+    ListEventStreamARN:
+      Description: ListEventStream Kinesis Stream ARN
       Value:
         'Fn::GetAtt':
-          - RecipientEventStream
+          - ListEventStream
           - Arn

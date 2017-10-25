@@ -45,6 +45,7 @@
     "babyparse": "^0.4.6",
     "base64-url": "^1.2.2",
     "bluebird": "^3.4.1",
+    "bluebird-retry": "^0.11.0",
     "bodybuilder": "^2.1.0",
     "cheerio": "^0.20.0",
     "csv-write-stream": "^2.0.0",

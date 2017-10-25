@@ -1,10 +1,12 @@
 import Joi from 'joi';
 import { Recipient } from 'moonmail-models';
 
+const listRecipientImported = 'lists.recipientImported';
+
 const eventSchemas = {
-  'list.recipient.import': {
+  [listRecipientImported]: {
     schema: Joi.object({
-      type: 'list.recipient.import',
+      type: listRecipientImported,
       payload: Joi.object({
         recipient: Joi.object({
           id: Joi.string().required(),
@@ -31,9 +33,7 @@ const isValid = (event) => {
   }
 };
 
-const publishBatch = () => {};
-
 export default {
-  isValid,
-  publishBatch
+  listRecipientImported,
+  isValid
 };
