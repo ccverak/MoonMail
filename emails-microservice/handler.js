@@ -63,3 +63,22 @@ export function persistEmailEvent(snsEvent, context, callback) {
     .then(() => callback(null, true))
     .catch(err => callback(err));
 }
+
+export function eventStreamProcessor(event, context, callback) {
+  const getKinesisPayload = R.path(['kinesis', 'data']);
+  const decodeBase64String = R.partialRight(Buffer.from, ['base64']);
+  const parseBase64Json = R.pipe(decodeBase64String, R.tryCatch(JSON.parse, R.always({})));
+  const deserializeKinesisEvent = R.pipe(getKinesisPayload, parseBase64Json);
+  const byType = R.groupBy(R.prop('type'));
+
+
+  const streamEventsByType = R.pipe(
+    R.map(deserializeKinesisEvent),
+    byType
+  );
+
+  const eventsByType = streamEventsByType(event);
+  return Api.processScheduleAutomationEmailEvents(eventsByType[Events.scheduleAutomationEmail])
+    .then(() => callback(null, true))
+    .catch(err => callback(err));
+}

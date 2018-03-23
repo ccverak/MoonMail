@@ -42,12 +42,32 @@ const persistEmailEvent = function persistEmailEvent(emailEvent = {}) {
   return repository.save(payload);
 };
 
+const composeEmail = function composeEmail() { 
+  
+};
+
+const processScheduleAutomationEmailEvents = function processScheduleAutomationEmailEvents(events) {
+  foreach do {
+    composeEmail;
+    scheduleEmail;
+  }
+};
+
+const scheduleEmail = function scheduleEmail(context) {
+
+};
+
+const sendScheduledEmails = function sendScheduledEmails() {
+
+};
+
 const Api = {
   processSesNotification,
   processEmailEvent,
   processLinkClick,
   processEmailOpen,
-  persistEmailEvent
+  persistEmailEvent,
+  processScheduleAutomationEmailEvents
 };
 
 export default Api;
