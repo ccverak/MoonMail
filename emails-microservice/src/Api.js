@@ -42,16 +42,14 @@ const persistEmailEvent = function persistEmailEvent(emailEvent = {}) {
   return repository.save(payload);
 };
 
-const composeEmail = function composeEmail() { 
-  
+const composeEmail = function composeEmail() {
+
 };
 
 const processScheduleAutomationEmailEvents = function processScheduleAutomationEmailEvents(events) {
-  foreach do {
-    composeEmail;
-    scheduleEmail;
-  }
+  events.map();
 };
+
 
 const scheduleEmail = function scheduleEmail(context) {
 
