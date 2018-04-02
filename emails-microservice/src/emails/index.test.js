@@ -9,7 +9,7 @@ import Emails from './index';
 
 const { expect } = chai;
 
-describe('Email', () => {
+describe('Emails', () => {
   const recipientId = 'recipient-id';
   const listId = 'list-id';
   const segmentId = 'segment-id';
@@ -108,6 +108,24 @@ describe('Email', () => {
   describe('.buildAttachments', () => {
     it('builds attachments', () => {
       // pending
+    });
+  });
+
+  describe('.addRecipientTrackingToUrls', () => {
+    it('parses and enriches the urls with recipient and list tracking information', async () => {
+      const subject = 'Hello {{ name }}!';
+      const body = 'Hello world {{ name }} {{ surname }}. <a href="http://mysite.com/my-path/">Click me</a> <a mm-disable-tracking="true" href="http://mysite.com/my-path-2/">Click me 2</a> <a href="{{ unsubscribe_url }}">Unsubscribe me!</a>';
+      const metafields = {
+        name: 'Carlos',
+        surname: 'Castellanos',
+        address: 'My address'
+      };
+      const emailTemplate = { from, to, subject, body };
+      const footerRequired = true;
+      const builtBody = await buildBody(emailTemplate, metafields, { recipientId, listId, segmentId, campaignId, userId, footerRequired, unsubscribeUrl, attachments: [], apiHostname: 'api.moonmail.io' });
+      expect(builtBody).to.contain('<a href="http://mysite.com/my-path/?r=recipient-id&u=user-id&l=list-id&s=segment-id">Click me</a>');
+      expect(builtBody).to.contain('<a mm-disable-tracking="true" href="http://mysite.com/my-path-2/">Click me 2</a>');
+      expect(builtBody).to.contain('<a href="http://something.com/unsunscribe-me">Unsubscribe me!</a>');
     });
   });
 

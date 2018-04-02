@@ -23,6 +23,7 @@
   "dependencies": {
     "base64-url": "^2.2.0",
     "bluebird": "^3.5.1",
+    "cheerio": "^1.0.0-rc.2",
     "joi": "^13.1.2",
     "liquid-node": "^3.0.0",
     "mailcomposer": "^4.0.2",
