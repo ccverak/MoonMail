@@ -43,6 +43,8 @@ provider:
       Fn::ImportValue: EventsRouterStreamName-${self:custom.currentStage}
     CLICKS_TABLE: ${self:custom.config.CLICKS_TABLE}
     OPENS_TABLE: ${self:custom.config.OPENS_TABLE}
+    JOBS_SERVICE__SCHEDULE_JOB_FUNCTION_NAME: MoonMail-v2-jobs-scheduler-scheduleJob
+    JOBS_SERVICE__UPDATE_JOB_STATUS_FUNCTION_NAME: MoonMail-v2-jobs-scheduler-updateJobStatus
   iamRoleStatements:
     - Effect: "Allow"
       Action:

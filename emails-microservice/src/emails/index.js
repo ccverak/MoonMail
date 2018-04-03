@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import mailcomposer from 'mailcomposer';
+import { scheduleJob } from 'job-scheduler';
 import buildUnsubscribeUrl from './buildUnsubscribeUrl';
 import buildFromPart from './buildFromPart';
 import buildHeaders from './buildHeaders';
@@ -31,6 +32,8 @@ const assemble = async function assemble({ entity: { userId, campaignId, body, s
     attachments: attachments || [],
     apiHostname
   };
+
+  scheduleJob(topic , { my: 'payload' }, { event, context });
 
   return Promise.props({
     headers: buildHeaders(emailTemplate, metafields, context),
